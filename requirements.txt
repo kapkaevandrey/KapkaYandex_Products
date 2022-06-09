@@ -1,0 +1,10 @@
+alembic==1.8.0
+asyncpg==0.25.0
+fastapi==0.78.0
+fastapi-users[sqlalchemy2]==10.0.7
+fastapi-users-db-sqlalchemy==4.0.3
+uvicorn[standard]==0.17.6
+watchgod==0.8.2
+sqlalchemy==1.4.37
+python-dotenv==0.20.0
+pydantic==1.9.1
