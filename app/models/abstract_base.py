@@ -1,13 +1,13 @@
 from datetime import datetime
-from enum import StrEnum
+import enum
 
 from sqlalchemy import (
-    Column, DateTime, String, Enum
+    Column, DateTime, String, Enum, Integer
 )
 from app.core.db import Base
 
 
-class ProductType(StrEnum):
+class ProductType(str, enum.Enum):
     offer = 'OFFER'
     category = 'CATEGORY'
 
@@ -17,4 +17,7 @@ class NodeBase(Base):
 
     name = Column(String(100), nullable=False)
     type = Column(Enum(ProductType))
-    date = Column(DateTime, default=datetime.utcnow)
+    date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    price = Column(Integer)
+
+# TODO написать constraints на price null if CATEGORY > 0 на date > datenow
