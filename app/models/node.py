@@ -17,15 +17,6 @@ class Node(NodeBase):
     parent_id = Column(GUID, ForeignKey('node.id'), nullable=True)
     children = relationship("Node")
 
-    @validates('parent_id', 'type')
-    def validate_parent_category(self, key, parent_id, type):
-        if parent_id is None and type == ProductType.offer.value:
-            raise ValueError(
-                f"Node type {ProductType.offer.value} most have "
-                f"not null 'field parent_id'"
-            )
-        return parent_id, type
-
     def __repr__(self):
         return (f'Type - "{self.type}" '
                 f'price - {self.price}.')

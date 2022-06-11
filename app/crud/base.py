@@ -33,12 +33,14 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def create(
             self, data: CreateSchemaType, session: AsyncSession,
+            commit=True,
             **attributes,
     ) -> ModelType:
         obj = self.model(
             **{**data.dict(), **attributes}
         )
-        await self.save(obj, session)
+        if commit:
+            await self.save(obj, session)
         return obj
 
     async def update(

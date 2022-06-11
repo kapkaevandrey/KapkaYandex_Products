@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from typing import Optional, List
 
@@ -44,15 +45,6 @@ class NodeListCreate(BaseModel):
     items: List[NodeCreate]
     date: datetime = Field(alias='updateDate')
 
-    @validator('date')
-    def date_cannot_be_greater_then_now(cls, value):
-        if value > datetime.now(tz=value.tzinfo):
-            raise ValueError(
-                f'Date cannot be greater the current time '
-                f'{datetime.now(tz=value.tzinfo).isoformat()}'
-            )
-        return value
-
 
 class NodeUpdate(NodeCreate):
     pass
@@ -60,3 +52,31 @@ class NodeUpdate(NodeCreate):
 
 class NodeRead(NodeCreate):
     date: datetime
+    children: List['NodeRead']
+
+
+parent_id = uuid.uuid4()
+second_parent_id = uuid.uuid4()
+third_parent_id = uuid.uuid4()
+four_parent_id = uuid.uuid4()
+
+date = datetime.utcnow()
+
+node_1 = NodeCreate(
+    id=parent_id, name='first_category', parentId=None,
+    price=None, type="OFFER", date=date
+)
+
+# node_2 = NodeCreate(
+#     id=second_parent_id, name='second_category', parentId=parent_id,
+#     price=None, type="CATEGORY", date=date
+# )
+# node_3 = NodeCreate(
+#     id=third_parent_id, name='third_category', parentId=parent_id,
+#     price=None, type="CATEGORY", date=date
+# )
+# node_4 = NodeCreate(
+#     id=third_parent_id, name='third_category', parentId=parent_id,
+#     price=None, type="CATEGORY", date=date
+# )
+
