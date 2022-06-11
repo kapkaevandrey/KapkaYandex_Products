@@ -1,11 +1,17 @@
 from app.models import NodeBase
 
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
-
+from sqlalchemy import (
+    Column, CheckConstraint, DateTime, ForeignKey,
+    Integer,
+)
 from fastapi_users_db_sqlalchemy import GUID
 
 
 class NodeHistory(NodeBase):
+    __tableargs__ = (
+        CheckConstraint('date < update_date', 'date_lower_update_date'),
+    )
+
     id = Column(Integer, primary_key=True)
     node_id = Column(GUID, ForeignKey('node.id'), nullable=False)
     update_date = Column(DateTime)
@@ -14,4 +20,3 @@ class NodeHistory(NodeBase):
         return (f'Type - "{self.type}" '
                 f'price - {self.price} '
                 f'in period for {self.date} to {self.update_date}.')
-    # TODO constraint date < update_date
