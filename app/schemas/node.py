@@ -67,7 +67,11 @@ class NodeUpdate(NodeCreate):
 
 class NodeRead(NodeBase):
     date: datetime
-    children: Optional[List]
 
     class Config:
         orm_mode = True
+
+
+class NodeFullRead(NodeRead):
+    children: Optional['NodeFullRead']
+

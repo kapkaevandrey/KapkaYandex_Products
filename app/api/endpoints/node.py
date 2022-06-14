@@ -17,7 +17,11 @@ from app.api.validators import (
     check_price_category_unchanged,
     try_get_object_by_attribute
 )
-from app.utils.update_create_process import update_or_create_items_package
+from app.utils.update_create_process import (
+    update_or_create_items_package, category_price_update
+)
+from app.utils.get_nested_response import create_nested_response
+
 
 router = APIRouter()
 
@@ -46,8 +50,7 @@ async def import_products_or_categories(
 
 @router.get(
     '/nodes/{node_id}',
-    # response_model=NodeRead,
-    # response_model_exclude_none=True
+    response_model=NodeRead,
 )
 async def get_info_about_node(
         node_id: UUID4,
@@ -59,7 +62,8 @@ async def get_info_about_node(
     node = await try_get_object_by_attribute(
         node_crud, attr_name='id', attr_value=node_id, session=session
     )
-    return jsonable_encoder(node)
+    node = await create_nested_response(session, node)
+    return node
 
 
 @router.delete(
@@ -78,7 +82,12 @@ async def import_products_or_categories(
     )
     node_removed = await node_crud.remove(node, session)
     if node_removed.parent_id is not None:
-        pass # TODO process price updates
+        category_objects = await category_price_update(
+            session, node_removed.parent_id, datetime.now()
+        )
+        session.add_all(tuple(category_objects))
+        await session.commit()
+        [await session.refresh(single_obj) for single_obj in category_objects]
 
 
 @router.get(
