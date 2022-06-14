@@ -32,7 +32,7 @@ async def try_get_object_by_attribute(
     return result
 
 
-async def check_items_package_id(
+def check_items_package_id(
         items: List[NodeCreate],
 ):
     uniq_id_counter = defaultdict(list)
@@ -70,7 +70,7 @@ async def check_items_package_parent_id(
             )
 
 
-async def check_category_unchanged(item: NodeCreate, item_obj: Node):
+def check_category_unchanged(item: NodeCreate, item_obj: Node):
     if item.type != item_obj.type:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
@@ -78,7 +78,15 @@ async def check_category_unchanged(item: NodeCreate, item_obj: Node):
         )
 
 
-async def check_date_valid(date: datetime, item_date: datetime):
+def check_price_category_unchanged(item: NodeCreate, item_obj: Node):
+    if item_obj.type == ProductType.category.value and item.price != item_obj.price:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=f'Price of category calculate automatically'
+        )
+
+
+def check_date_valid(date: datetime, item_date: datetime):
     if date <= item_date:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,

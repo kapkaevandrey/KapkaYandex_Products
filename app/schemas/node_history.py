@@ -7,7 +7,7 @@ from app.models import ProductType
 
 
 class NodeHistoryCreate(BaseModel):
-    id: UUID4
+    node_id: UUID4 = Field(alias='id')
     name: str
     parent_id: Optional[UUID4] = Field(None, alias='parentId')
     price: Optional[PositiveInt]

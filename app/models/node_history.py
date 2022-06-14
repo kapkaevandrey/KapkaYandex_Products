@@ -14,7 +14,8 @@ class NodeHistory(NodeBase):
 
     id = Column(Integer, primary_key=True)
     node_id = Column(GUID, ForeignKey('node.id'), nullable=False)
-    update_date = Column(DateTime)
+    parent_id = Column(GUID, nullable=True)
+    update_date = Column(DateTime(timezone=True))
 
     def __repr__(self):
         return (f'Type - "{self.type}" '

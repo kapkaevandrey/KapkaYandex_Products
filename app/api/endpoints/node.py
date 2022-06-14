@@ -14,6 +14,7 @@ from app.crud import node_crud
 from app.api.validators import (
     check_items_package_id, check_category_unchanged,
     check_items_package_parent_id, check_date_valid,
+    check_price_category_unchanged,
     try_get_object_by_attribute
 )
 from app.utils.update_create_process import update_or_create_items_package
@@ -32,13 +33,14 @@ async def import_products_or_categories(
     """
         ___You can import data about categories or products___
     """
-    await check_items_package_id(items_data.items)
+    check_items_package_id(items_data.items)
     await check_items_package_parent_id(session, items_data.items)
     for item in items_data.items:
         item_obj = await node_crud.get(item.id, session)
         if item_obj is not None:
-            await check_category_unchanged(item, item_obj)
-            await check_date_valid(items_data.date, item_obj.date)
+            check_category_unchanged(item, item_obj)
+            check_date_valid(items_data.date, item_obj.date)
+            check_price_category_unchanged(item, item_obj)
     await update_or_create_items_package(session, items_data)
 
 
@@ -57,7 +59,7 @@ async def get_info_about_node(
     node = await try_get_object_by_attribute(
         node_crud, attr_name='id', attr_value=node_id, session=session
     )
-    node.children
+    return jsonable_encoder(node)
 
 
 @router.delete(
