@@ -1,8 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 from http import HTTPStatus
-from typing import Any, List, Union
-
+from typing import Any, List
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,22 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.base import BaseCRUD, ModelType
 from app.crud import node_crud, node_history_crud
 from app.schemas.node import NodeCreate
-
-
-async def check_unique_attribute(
-        crud_obj: BaseCRUD,
-        attr_name: str,
-        attr_value: Any,
-        session: AsyncSession
-) -> None:
-    result = await crud_obj.get_by_attributes(
-        {attr_name: attr_value}, session
-    )
-    if result is not None:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'Field {attr_name} must be unique'
-        )
+from app.models import ProductType, Node
 
 
 async def try_get_object_by_attribute(
@@ -42,7 +26,7 @@ async def try_get_object_by_attribute(
             status_code=HTTPStatus.NOT_FOUND,
             detail=(
                 f'{crud_obj.model.__name__} '
-                f'с значением {attr_name}={attr_value} не найден!'
+                f'with {attr_name}={attr_value} not found!'
             )
         )
     return result
@@ -66,24 +50,38 @@ async def check_items_package_id(
             )
 
 
-async def try_create_or_update_node(
-        session: AsyncSession,
-        update_date: datetime,
-        *items: List[NodeCreate]
+async def check_items_package_parent_id(
+        session: AsyncSession, items: List[NodeCreate],
 ):
-    nodes = [None] * len(items)
-    history_nodes = [None] * len(items)
+    package_items_parent_id = set()
     for item in items:
-        node = await node_crud.get_by_attributes({'id': item.id}, session)
-        if node is None:
-            node = await node_crud.create(
-                data=item, session=session, commit=False, date=update_date
+        if item.type == ProductType.category.value:
+            package_items_parent_id.add(item.id)
+        if (item.parent_id is None or
+                item.parent_id in package_items_parent_id):
+            continue
+        parent = await try_get_object_by_attribute(
+            node_crud, 'id', item.parent_id, session
+        )
+        if parent.type == ProductType.offer.value:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail=f'{ProductType.offer.value} cannot be parent'
             )
-            # Save logic
-        else:
-            # Update Logic
-            pass
 
 
+async def check_category_unchanged(item: NodeCreate, item_obj: Node):
+    if item.type != item_obj.type:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=f'You cannot change type of Node'
+        )
 
 
+async def check_date_valid(date: datetime, item_date: datetime):
+    if date <= item_date:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=f'The update date cannot be less '
+                   f'than the already existing date'
+        )

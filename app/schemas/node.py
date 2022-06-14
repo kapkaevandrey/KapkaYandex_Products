@@ -8,13 +8,15 @@ from pydantic import (
 from app.models import ProductType
 
 
-class NodeCreate(BaseModel):
+class NodeBase(BaseModel):
     id: UUID4
     name: str
     parent_id: Optional[UUID4]
     price: Optional[NonNegativeInt]
     type: ProductType
 
+
+class NodeCreate(NodeBase):
     @validator('name')
     def value_cannot_be_none(cls, value):
         if not value or value is None:
@@ -37,6 +39,11 @@ class NodeCreate(BaseModel):
                     f'Price for category {ProductType.category.value}'
                     f' must be None when create'
                 )
+        if values['id'] == values['parent_id']:
+            raise ValueError(
+                f'A node cannot be a parent to itself '
+                f'id={values["id"]} parent_id={values["parent_id"]}'
+            )
         return values
 
 
@@ -58,5 +65,9 @@ class NodeUpdate(NodeCreate):
     pass
 
 
-class NodeRead(NodeCreate):
+class NodeRead(NodeBase):
     date: datetime
+    children: Optional[List]
+
+    class Config:
+        orm_mode = True

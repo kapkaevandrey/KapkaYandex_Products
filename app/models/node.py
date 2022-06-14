@@ -15,7 +15,7 @@ class Node(NodeBase):
 
     id = Column(GUID, primary_key=True, default=uuid4)
     parent_id = Column(GUID, ForeignKey('node.id'), nullable=True)
-    children = relationship("Node")
+    children = relationship('Node', cascade='all,delete')
 
     def __repr__(self):
         return (f'Type - "{self.type}" '

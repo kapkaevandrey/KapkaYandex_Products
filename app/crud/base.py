@@ -5,6 +5,7 @@ from typing import (
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import Base
@@ -47,12 +48,14 @@ class BaseCRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             self,
             obj: ModelType, data: UpdateSchemaType,
             session: AsyncSession,
+            commit=True,
             **attributes,
     ) -> ModelType:
         data = {**data.dict(exclude_unset=True), **attributes}
         [setattr(obj, field, data[field]) for field in jsonable_encoder(obj)
          if field in data]
-        await self.save(obj, session)
+        if commit:
+            await self.save(obj, session)
         return obj
 
     async def remove(

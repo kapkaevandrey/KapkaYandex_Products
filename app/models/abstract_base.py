@@ -17,6 +17,6 @@ class NodeBase(Base):
     __abstract__ = True
 
     name = Column(String(100), nullable=False)
-    type = Column(Enum(ProductType))
+    type = Column(Enum(ProductType), nullable=False)
     date = Column(DateTime(timezone=True), nullable=False)
     price = Column(Integer)
