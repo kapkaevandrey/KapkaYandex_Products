@@ -3,24 +3,29 @@ from typing import List, Optional
 from http import HTTPStatus
 
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Path
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import UUID4
 
-from app.schemas.node import NodeListCreate, NodeRead
-from app.core.db import get_async_session
-from app.crud import node_crud
 from app.api.validators import (
     check_items_package_id, check_category_unchanged,
     check_items_package_parent_id, check_date_valid,
-    check_price_category_unchanged,
-    try_get_object_by_attribute
+    check_price_category_unchanged, date_lees_then_now,
+    try_get_object_by_attribute, valid_time_period
 )
+from app.core.db import get_async_session
+from app.core.config import settings
+from app.crud import node_crud
+from app.schemas.node import NodeListCreate, NodeList
+from app.schemas.node_history import NodeHistoryListRead, NodeHistoryRead
 from app.utils.update_create_process import (
     update_or_create_items_package, category_price_update
 )
 from app.utils.get_nested_response import create_nested_response
+from app.utils.get_sales_statistics import (
+    get_offer_sales, get_node_update_statistic
+)
 
 
 router = APIRouter()
@@ -49,11 +54,10 @@ async def import_products_or_categories(
 
 
 @router.get(
-    '/nodes/{node_id}',
-    response_model=NodeRead,
+    '/nodes/{id}',
 )
 async def get_info_about_node(
-        node_id: UUID4,
+        node_id: UUID4 = Path(alias='id'),
         session: AsyncSession = Depends(get_async_session)
 ):
     """
@@ -71,7 +75,7 @@ async def get_info_about_node(
     status_code=HTTPStatus.OK
 )
 async def import_products_or_categories(
-    node_id: UUID4,
+    node_id: UUID4 = Path(alias='id'),
     session: AsyncSession = Depends(get_async_session)
 ):
     """
@@ -91,29 +95,54 @@ async def import_products_or_categories(
 
 
 @router.get(
-    '/sales'
+    '/sales',
+    response_model=NodeList
 )
 async def get_product_price_update_last_date(
-     date: datetime
+     date: datetime = Query(),
+     session: AsyncSession = Depends(get_async_session)
 ):
     """
         ___You can see information about product or category.___
     """
-    pass
+    start_time = date - settings.statistic_time_period
+    offers = await get_offer_sales(session, start_time)
+    return NodeList(items=offers)
 
 
 @router.get(
-    '/node/{node_id}/statistics'
+    '/node/{id}/statistics',
+    response_model=NodeList
 )
 async def get_product_price_update_last_date(
-        node_id: UUID4,
-        dateStart: Optional[datetime], # прописать alias
-        dateEnd: Optional[datetime]
+        node_id: UUID4 = Path(alias='id'),
+        date_start: Optional[datetime] = Query(None, alias='dateStart'),
+        date_end: Optional[datetime] = Query(None, alias='dateEnd'),
+        session: AsyncSession = Depends(get_async_session)
 ):
     """
         ___You can see price statistics for this product or
         category.___
     """
-    pass
+    node = await try_get_object_by_attribute(
+        node_crud, attr_name='id', attr_value=node_id, session=session
+    )
+    if date_start is not None:
+        date_lees_then_now(date_start)
+    if date_end is not None:
+        date_lees_then_now(date_end)
+    if date_start is not None and date_end is not None:
+        valid_time_period(date_start, date_end)
+    node_statistic = await get_node_update_statistic(
+        session, node, date_start, date_end
+    )
+    return NodeHistoryListRead(
+        items=[NodeHistoryRead(
+            price=node.price, date=node.date, name=node.name,
+            type=node.type, parentId=node.parent_id,
+            id=node.node_id
+        ) for node in node_statistic]
+    )
+
 
 

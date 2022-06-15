@@ -19,3 +19,15 @@ class NodeHistoryCreate(BaseModel):
 class NodeHistoryUpdate(BaseModel):
     update_date: datetime
 
+
+class NodeHistoryRead(BaseModel):
+    id: UUID4
+    name: str
+    parent_id: Optional[UUID4] = Field(None, alias='parentId')
+    price: Optional[PositiveInt]
+    type: ProductType
+    date: datetime
+
+
+class NodeHistoryListRead(BaseModel):
+    items: List[NodeHistoryRead]

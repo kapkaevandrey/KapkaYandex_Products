@@ -1,14 +1,14 @@
 from collections import deque
 from datetime import datetime
-from typing import List, Dict, Union
+from typing import List
 from uuid import UUID
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import node_crud, node_history_crud
-from app.models import Node, NodeHistory, ProductType
-from app.schemas.node import NodeListCreate, NodeCreate
+from app.models import Node, ProductType
+from app.schemas.node import NodeListCreate
 from app.schemas.node_history import NodeHistoryCreate
 
 
@@ -30,7 +30,9 @@ async def update_or_create_items_package(
             node_obj = await node_crud.update(
                 node_obj, item, session, commit=False, date=date
             )
-        history_objects += await create_history_offer(session, item, date)
+        history_objects += await create_history_object(
+            session, node_obj, date,
+        )
         offer_objects.append(node_obj)
         if (node_obj.type == ProductType.offer.value and
                 node_obj.parent_id is not None):
@@ -39,55 +41,34 @@ async def update_or_create_items_package(
     await session.commit()
     [await session.refresh(single_obj) for single_obj in offer_objects]
     for unique_id in need_update_category_id:
-        category_objects += await category_price_update(session, unique_id, date)
+        category_objects += await category_price_update(
+            session, unique_id, date,
+        )
     session.add_all(tuple(category_objects))
     await session.commit()
     [await session.refresh(single_obj) for single_obj in category_objects]
 
 
-async def create_history_offer(
-        session: AsyncSession,
-        item: NodeCreate,
-        date: datetime
-) -> List[NodeHistory]:
-    updated_objects = []
-    if item.type == ProductType.offer.value:
-        history_node = await node_history_crud.get_by_attributes(
-            {'node_id': item.id}, order_by='date', session=session
-        )
-        if history_node is not None:
-            history_node.update_date = date
-            updated_objects.append(history_node)
-        new_history_node = await node_history_crud.create(
-            NodeHistoryCreate(
-                name=item.name, type=item.type, parentId=item.parent_id,
-                price=item.price, date=date, id=item.id
-            ), session, commit=False
-        )
-        updated_objects.append(new_history_node)
-    return updated_objects
-
-
-async def create_history_category(
+async def create_history_object(
         session: AsyncSession,
         node_obj: Node,
         date: datetime
-) -> List[NodeHistory]:
+):
     updated_objects = []
-    if node_obj.type == ProductType.category.value:
-        history_node = await node_history_crud.get_by_attributes(
-            {'node_id': node_obj.id}, order_by='date', session=session
-        )
-        if history_node is not None:
-            history_node.update_date = date
-            updated_objects.append(history_node)
-        new_history_node = await node_history_crud.create(
-            NodeHistoryCreate(
-                name=node_obj.name, type=node_obj.type, parentId=node_obj.parent_id,
-                price=node_obj.price, date=date, id=node_obj.id
-            ), session, commit=False
-        )
-        updated_objects.append(new_history_node)
+    history_node = await node_history_crud.get_by_attributes(
+        {'node_id': node_obj.id}, order_by='date', session=session
+    )
+    if history_node is not None:
+        history_node.update_date = date
+        updated_objects.append(history_node)
+    new_history_node = await node_history_crud.create(
+        NodeHistoryCreate(
+            name=node_obj.name, type=node_obj.type,
+            parentId=node_obj.parent_id,
+            price=node_obj.price, date=date, id=node_obj.id
+        ), session, commit=False
+    )
+    updated_objects.append(new_history_node)
     return updated_objects
 
 
@@ -112,8 +93,8 @@ async def category_price_update(
                 )
             )
             amount, obj_count = data_offer.first()
-            summary += amount if amount is not None else summary
-            counter += obj_count if obj_count is not None else counter
+            summary = summary if amount is None else summary + amount
+            counter = counter if obj_count is None else counter + obj_count
             data_category = await session.execute(
                 select(
                     Node
@@ -126,10 +107,10 @@ async def category_price_update(
             if child_categories:
                 [current_deque.append(category.id)
                  for category in child_categories if
-                 category_id not in id_checked]
+                 category.id not in id_checked]
         current_node.price = int(summary / counter) if counter > 0 else None
         updated_categories.append(current_node)
-        history += await create_history_category(session, current_node, date)
+        history += await create_history_object(session, current_node, date)
         id_checked.add(current_node.id)
         if current_node.parent_id is not None:
             await update_price(

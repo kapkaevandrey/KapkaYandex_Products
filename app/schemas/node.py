@@ -11,7 +11,7 @@ from app.models import ProductType
 class NodeBase(BaseModel):
     id: UUID4
     name: str
-    parent_id: Optional[UUID4]
+    parent_id: Optional[UUID4] = Field(alias='parentId')
     price: Optional[NonNegativeInt]
     type: ProductType
 
@@ -75,3 +75,6 @@ class NodeRead(NodeBase):
 class NodeFullRead(NodeRead):
     children: Optional['NodeFullRead']
 
+
+class NodeList(BaseModel):
+    items: List[NodeRead]

@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import BaseCRUD, ModelType
-from app.crud import node_crud, node_history_crud
+from app.crud import node_crud
 from app.schemas.node import NodeCreate
 from app.models import ProductType, Node
 
@@ -79,17 +79,38 @@ def check_category_unchanged(item: NodeCreate, item_obj: Node):
 
 
 def check_price_category_unchanged(item: NodeCreate, item_obj: Node):
-    if item_obj.type == ProductType.category.value and item.price != item_obj.price:
+    if (item_obj.type == ProductType.category.value and
+            item.price != item_obj.price):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail=f'Price of category calculate automatically'
         )
 
 
-def check_date_valid(date: datetime, item_date: datetime):
+def check_date_valid(date: datetime, item_date: datetime) -> None:
     if date <= item_date:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail=f'The update date cannot be less '
                    f'than the already existing date'
+        )
+
+
+def date_lees_then_now(date: datetime) -> None:
+    if date > datetime.now(tz=date.tzinfo):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=f'The date cannot be greater '
+                   f'than the current date'
+        )
+
+
+def valid_time_period(
+        start_time: datetime, end_time: datetime
+) -> None:
+    if start_time >= end_time:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail=f'The start date cannot be greater or equal '
+                   f'than the end date'
         )
