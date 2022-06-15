@@ -105,13 +105,14 @@ async def get_product_price_update_last_date(
     """
         ___You can see information about product or category.___
     """
+    date = date.replace(tzinfo=None)
     start_time = date - settings.statistic_time_period
     offers = await get_offer_sales(session, start_time)
     return NodeList(items=offers)
 
 
 @router.get(
-    '/node/{id}/statistics',
+    '/node/{id}/statistic',
     response_model=NodeList
 )
 async def get_product_price_update_last_date(
@@ -128,8 +129,10 @@ async def get_product_price_update_last_date(
         node_crud, attr_name='id', attr_value=node_id, session=session
     )
     if date_start is not None:
+        date_start = date_start.replace(tzinfo=None)
         date_lees_then_now(date_start)
     if date_end is not None:
+        date_end = date_end.replace(tzinfo=None)
         date_lees_then_now(date_end)
     if date_start is not None and date_end is not None:
         valid_time_period(date_start, date_end)

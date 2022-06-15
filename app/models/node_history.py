@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.models import NodeBase
 
 from sqlalchemy import (
@@ -15,7 +17,7 @@ class NodeHistory(NodeBase):
     id = Column(Integer, primary_key=True)
     node_id = Column(GUID, ForeignKey('node.id'), nullable=False)
     parent_id = Column(GUID, nullable=True)
-    update_date = Column(DateTime(timezone=True))
+    update_date = Column(DateTime)
 
     def __repr__(self):
         return (f'Type - "{self.type}" '

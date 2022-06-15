@@ -4,6 +4,7 @@ from typing import Optional, List
 from pydantic import (
     BaseModel, NonNegativeInt, UUID4, Field, validator, root_validator,
 )
+from pydantic.json import isoformat
 
 from app.models import ProductType
 
@@ -52,11 +53,12 @@ class NodeListCreate(BaseModel):
     date: datetime = Field(alias='updateDate')
 
     @validator('date')
-    def date_cannot_be_greater_then_now(cls, value):
-        if value > datetime.now(tz=value.tzinfo):
+    def date_cannot_be_greater_then_now(cls, value: datetime):
+        value = value.replace(tzinfo=None)
+        if value > datetime.now():
             raise ValueError(
                 f'Date cannot be greater the current time '
-                f'{datetime.now(tz=value.tzinfo).isoformat()}'
+                f'{datetime.now()}'
             )
         return value
 

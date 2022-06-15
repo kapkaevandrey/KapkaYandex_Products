@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import enum
 
 from sqlalchemy import (
     Column, DateTime, String, Enum, Integer,
 )
-from sqlalchemy.orm import validates
+from sqlalchemy.dialects.postgresql import DATE
 from app.core.db import Base
 
 
@@ -18,5 +18,5 @@ class NodeBase(Base):
 
     name = Column(String(100), nullable=False)
     type = Column(Enum(ProductType), nullable=False)
-    date = Column(DateTime(timezone=True), nullable=False)
+    date = Column(DateTime, nullable=False)
     price = Column(Integer)

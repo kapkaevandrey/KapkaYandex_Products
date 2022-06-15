@@ -109,6 +109,7 @@ async def category_price_update(
                  for category in child_categories if
                  category.id not in id_checked]
         current_node.price = int(summary / counter) if counter > 0 else None
+        current_node.date = date
         updated_categories.append(current_node)
         history += await create_history_object(session, current_node, date)
         id_checked.add(current_node.id)
