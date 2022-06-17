@@ -1,8 +1,8 @@
 import uuid
-from typing import Union, Optional
+from typing import Union
 
 
-from fastapi import Depends, Request
+from fastapi import Depends
 from fastapi_users import (
     BaseUserManager, FastAPIUsers, UUIDIDMixin,
     InvalidPasswordException,
@@ -74,5 +74,3 @@ fastapi_users = FastAPIUsers(
 
 current_user = fastapi_users.current_user(active=True)
 current_superuser = fastapi_users.current_user(active=True, superuser=True)
-
-

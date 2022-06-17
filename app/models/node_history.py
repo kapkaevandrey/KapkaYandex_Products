@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.models import NodeBase
 
 from sqlalchemy import (

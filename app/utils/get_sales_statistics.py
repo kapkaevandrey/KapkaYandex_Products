@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import select, and_,  or_, between
+from sqlalchemy import select, and_, or_, between
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Node, NodeHistory, ProductType
@@ -76,6 +76,3 @@ async def get_node_update_statistic(
         select_stmt.order_by(NodeHistory.date)
     )
     return data_history.scalars().all()
-
-
-

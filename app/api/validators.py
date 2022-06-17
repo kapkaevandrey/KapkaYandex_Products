@@ -74,7 +74,7 @@ def check_category_unchanged(item: NodeCreate, item_obj: Node):
     if item.type != item_obj.type:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'You cannot change type of Node'
+            detail='You cannot change type of Node'
         )
 
 
@@ -83,7 +83,7 @@ def check_price_category_unchanged(item: NodeCreate, item_obj: Node):
             item.price != item_obj.price):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'Price of category calculate automatically'
+            detail='Price of category calculate automatically'
         )
 
 
@@ -91,8 +91,8 @@ def check_date_valid(date: datetime, item_date: datetime) -> None:
     if date <= item_date:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'The update date cannot be less '
-                   f'than the already existing date'
+            detail='The update date cannot be less '
+                   'than the already existing date'
         )
 
 
@@ -100,8 +100,8 @@ def date_lees_then_now(date: datetime) -> None:
     if date > datetime.now(tz=date.tzinfo):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'The date cannot be greater '
-                   f'than the current date'
+            detail='The date cannot be greater '
+                   'than the current date'
         )
 
 
@@ -111,6 +111,6 @@ def valid_time_period(
     if start_time >= end_time:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail=f'The start date cannot be greater or equal '
-                   f'than the end date'
+            detail='The start date cannot be greater or equal '
+                   'than the end date'
         )

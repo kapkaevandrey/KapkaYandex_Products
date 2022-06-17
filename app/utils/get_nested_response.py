@@ -1,5 +1,4 @@
 from collections import deque
-from datetime import timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
 

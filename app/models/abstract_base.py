@@ -1,10 +1,8 @@
-from datetime import datetime, timezone
 import enum
 
 from sqlalchemy import (
     Column, DateTime, String, Enum, Integer,
 )
-from sqlalchemy.dialects.postgresql import DATE
 from app.core.db import Base
 
 

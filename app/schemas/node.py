@@ -4,7 +4,6 @@ from typing import Optional, List
 from pydantic import (
     BaseModel, NonNegativeInt, UUID4, Field, validator, root_validator,
 )
-from pydantic.json import isoformat
 
 from app.models import ProductType
 

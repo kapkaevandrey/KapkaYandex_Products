@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 from http import HTTPStatus
 
 
 from fastapi import APIRouter, Depends, Query, Path
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import UUID4
 
@@ -66,8 +65,7 @@ async def get_info_about_node(
     node = await try_get_object_by_attribute(
         node_crud, attr_name='id', attr_value=node_id, session=session
     )
-    node = await create_nested_response(session, node)
-    return node
+    return await create_nested_response(session, node)
 
 
 @router.delete(
@@ -100,7 +98,7 @@ async def import_products_or_categories(
 )
 async def get_product_price_update_last_date(
      date: datetime = Query(),
-     session: AsyncSession = Depends(get_async_session)
+     session: AsyncSession = Depends(get_async_session),
 ):
     """
         ___You can see information about product or category.___
@@ -146,6 +144,3 @@ async def get_product_price_update_last_date(
             id=node.node_id
         ) for node in node_statistic]
     )
-
-
-
