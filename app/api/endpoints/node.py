@@ -97,8 +97,8 @@ async def import_products_or_categories(
     response_model=NodeList
 )
 async def get_product_price_update_last_date(
-     date: datetime = Query(),
-     session: AsyncSession = Depends(get_async_session),
+    date: datetime = Query(),
+    session: AsyncSession = Depends(get_async_session),
 ):
     """
         ___You can see information about product or category.___
