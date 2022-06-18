@@ -18,3 +18,7 @@ class NodeBase(Base):
     type = Column(Enum(ProductType), nullable=False)
     date = Column(DateTime, nullable=False)
     price = Column(Integer)
+
+    @property
+    def iso_date(self) -> str:
+        return self.date.isoformat(timespec='milliseconds') + 'Z'

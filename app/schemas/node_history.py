@@ -28,6 +28,13 @@ class NodeHistoryRead(BaseModel):
     type: ProductType
     date: datetime
 
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat(
+                timespec='milliseconds'
+            ) + 'Z',
+        }
+
 
 class NodeHistoryListRead(BaseModel):
     items: List[NodeHistoryRead]

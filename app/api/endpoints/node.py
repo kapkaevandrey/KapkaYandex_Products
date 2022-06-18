@@ -111,7 +111,6 @@ async def get_product_price_update_last_date(
 
 @router.get(
     '/node/{id}/statistic',
-    response_model=NodeList
 )
 async def get_product_price_update_last_date(
         node_id: UUID4 = Path(alias='id'),
@@ -137,10 +136,16 @@ async def get_product_price_update_last_date(
     node_statistic = await get_node_update_statistic(
         session, node, date_start, date_end
     )
-    return NodeHistoryListRead(
-        items=[NodeHistoryRead(
-            price=node.price, date=node.date, name=node.name,
+    nodes_history_read = []
+    for node in node_statistic:
+        history_obj = NodeHistoryRead(
+            price=node.price,
+            date=node.date,
+            name=node.name,
             type=node.type, parentId=node.parent_id,
             id=node.node_id
-        ) for node in node_statistic]
-    )
+        )
+        history_obj.date = node.iso_date
+        print(history_obj.date)
+        nodes_history_read.append(history_obj)
+    return {'items': nodes_history_read}
