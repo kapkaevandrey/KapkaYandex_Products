@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional
 from http import HTTPStatus
 
-
 from fastapi import APIRouter, Depends, Query, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import UUID4
@@ -146,6 +145,5 @@ async def get_product_price_update_last_date(
             id=node.node_id
         )
         history_obj.date = node.iso_date
-        print(history_obj.date)
         nodes_history_read.append(history_obj)
     return {'items': nodes_history_read}
