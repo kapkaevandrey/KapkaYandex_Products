@@ -17,7 +17,7 @@ from app.core.db import get_async_session
 from app.core.config import settings
 from app.crud import node_crud
 from app.schemas.node import NodeListCreate, NodeList
-from app.schemas.node_history import NodeHistoryListRead, NodeHistoryRead
+from app.schemas.node_history import NodeHistoryRead
 from app.utils.update_create_process import (
     update_or_create_items_package, category_price_update
 )
