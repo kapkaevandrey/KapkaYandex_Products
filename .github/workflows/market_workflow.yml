@@ -50,6 +50,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: 15052016/foodgram_backend:latest
+          tags: 15052016/market:latest
           context: backend
           file: Dockerfile
