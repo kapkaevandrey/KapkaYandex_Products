@@ -92,7 +92,7 @@ jobs:
             echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DATABASE_URL=${{ secrets.DB_ENGINE }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }} >> .env
-            echo APP_TITLE=\${{ secrets.APP_TITLE }} >> .env
+            echo APP_TITLE=${{ secrets.APP_TITLE }} >> .env
             echo APP_DESCRIPTION=${{ secrets.APP_DESCRIPTION }} >> .env
             echo FIRST_SUPERUSER_EMAIL=${{ secrets.FIRST_SUPERUSER_EMAIL }} >> .env
             echo FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }} >> .env
