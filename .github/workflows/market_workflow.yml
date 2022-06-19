@@ -51,5 +51,4 @@ jobs:
         with:
           push: true
           tags: 15052016/market:latest
-          context: backend
           file: Dockerfile
