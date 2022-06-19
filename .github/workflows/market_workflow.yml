@@ -92,7 +92,7 @@ jobs:
             sudo echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
             sudo echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             sudo echo DATABASE_URL=${{ secrets.DB_ENGINE }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }} >> .env
-            sudo echo APP_TITLE=${{ secrets.APP_TITLE }} >> .env
+            sudo echo APP_TITLE=\${{ secrets.APP_TITLE }} >> .env
             sudo echo APP_DESCRIPTION=${{ secrets.APP_DESCRIPTION }} >> .env
             sudo echo FIRST_SUPERUSER_EMAIL=${{ secrets.FIRST_SUPERUSER_EMAIL }} >> .env
             sudo echo FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }} >> .env
