@@ -64,7 +64,11 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          script: whoami
+          port: 22
+          command_timeout: 200m
+          script: |
+            sudo whoami
+            sudo ls -al
 
   deploy:
     runs-on: ubuntu-latest
@@ -81,16 +85,16 @@ jobs:
             sudo docker pull 15052016/market:latest
             sudo docker-compose stop
             sudo docker-compose rm backend
-            touch .env
-            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
-            echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-            echo DATABASE_URL=${{ secrets.DB_ENGINE }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }} >> .env
-            echo APP_TITLE=${{ secrets.APP_TITLE }} >> .env
-            echo APP_DESCRIPTION=${{ secrets.APP_DESCRIPTION }} >> .env
-            echo FIRST_SUPERUSER_EMAIL=${{ secrets.FIRST_SUPERUSER_EMAIL }} >> .env
-            echo FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }} >> .env
-            echo SECRET=${{ secrets.SECRET }} >> .env
+            sudo touch .env
+            sudo echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+            sudo echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            sudo echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            sudo echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+            sudo echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
+            sudo echo DATABASE_URL=${{ secrets.DB_ENGINE }}://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }} >> .env
+            sudo echo APP_TITLE=${{ secrets.APP_TITLE }} >> .env
+            sudo echo APP_DESCRIPTION=${{ secrets.APP_DESCRIPTION }} >> .env
+            sudo echo FIRST_SUPERUSER_EMAIL=${{ secrets.FIRST_SUPERUSER_EMAIL }} >> .env
+            sudo echo FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }} >> .env
+            sudo echo SECRET=${{ secrets.SECRET }} >> .env
             sudo docker-compose up -d
