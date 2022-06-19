@@ -81,7 +81,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          port: 22
           script: |
             sudo docker pull 15052016/market:latest
             sudo docker-compose stop

@@ -9,7 +9,7 @@ services:
       - .env
 
   backend:
-    build: .
+    image: 15052016/market:latest
     restart: always
     command: >
       sh -c "alembic upgrade head
