@@ -92,4 +92,4 @@ jobs:
             sudo echo FIRST_SUPERUSER_EMAIL=${{ secrets.FIRST_SUPERUSER_EMAIL }} >> .env
             sudo echo FIRST_SUPERUSER_PASSWORD=${{ secrets.FIRST_SUPERUSER_PASSWORD }} >> .env
             sudo echo SECRET=${{ secrets.SECRET }} >> .env
-            sudo docker-compose up -d
+            sudo docker-compose up -d --env-file .env
