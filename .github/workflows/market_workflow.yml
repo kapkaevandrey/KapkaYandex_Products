@@ -61,12 +61,12 @@ jobs:
       - name: Install Open VPN
         run: | 
           sudo apt-get install openvpn
-          echo "${{ secrets.VPN_FILE }}" > .github/vpn/config.ovpn
+          echo "${{ secrets.FILE_OVPN }}" > .github/vpn/config.ovpn
       - name: Connect VPN
         uses: golfzaptw/action-connect-ovpn@master
         id: connect_vpn
         with:
-          PING_URL: '127.0.0.1'
+          PING_URL: ${{ secrets.SERVER_HOST }}
           FILE_OVPN: '.github/vpn/config.ovpn'
         env:
           CA_CRT: ${{ secrets.CA_CRT}}
