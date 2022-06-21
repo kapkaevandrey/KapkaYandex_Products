@@ -7,7 +7,7 @@ from pydantic import BaseSettings, EmailStr
 class Settings(BaseSettings):
     app_title: str = 'KapkaMarket'
     app_description: str = 'Price comparison service'
-    database_url: str = 'postgresql+asyncpg://postgres:postgres@db:5432/postgres'
+    database_url: str
     secret: str = 'where is my money lebowski'
     first_superuser_email: Optional[EmailStr] = None
     first_superuser_password: Optional[str] = None
