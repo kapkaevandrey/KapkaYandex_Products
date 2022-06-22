@@ -15,8 +15,8 @@ from app.api.validators import (
 from app.core.db import get_async_session
 from app.core.config import settings
 from app.crud import node_crud
-from app.schemas.node import NodeListCreate, NodeList
-from app.schemas.node_history import NodeHistoryRead
+from app.schemas.node import NodeListCreate, NodeList, NodeFullRead
+from app.schemas.node_history import NodeHistoryRead, NodeHistoryListRead
 from app.utils.update_create_process import (
     update_or_create_items_package, category_price_update
 )
@@ -53,6 +53,8 @@ async def import_products_or_categories(
 
 @router.get(
     '/nodes/{id}',
+    status_code=HTTPStatus.OK,
+    response_model=NodeFullRead
 )
 async def get_info_about_node(
         node_id: UUID4 = Path(alias='id'),
@@ -69,9 +71,10 @@ async def get_info_about_node(
 
 @router.delete(
     '/delete/{id}',
-    status_code=HTTPStatus.OK
+    status_code=HTTPStatus.OK,
+    response_model=NodeFullRead
 )
-async def import_products_or_categories(
+async def delete_product_or_categorie(
     node_id: UUID4 = Path(alias='id'),
     session: AsyncSession = Depends(get_async_session)
 ):
@@ -116,7 +119,7 @@ async def get_product_price_update_last_date(
         date_start: Optional[datetime] = Query(None, alias='dateStart'),
         date_end: Optional[datetime] = Query(None, alias='dateEnd'),
         session: AsyncSession = Depends(get_async_session)
-):
+) -> NodeHistoryListRead:
     """
         ___You can see price statistics for this product or
         category.___
@@ -139,7 +142,7 @@ async def get_product_price_update_last_date(
     for node in node_statistic:
         history_obj = NodeHistoryRead(
             price=node.price,
-            date=node.date,
+            date=node.iso_date,
             name=node.name,
             type=node.type, parentId=node.parent_id,
             id=node.node_id

@@ -15,6 +15,13 @@ class NodeBase(BaseModel):
     price: Optional[NonNegativeInt]
     type: ProductType
 
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.replace(tzinfo=None).isoformat(
+                timespec='milliseconds'
+            ) + 'Z',
+        }
+
 
 class NodeCreate(NodeBase):
     @validator('name')
@@ -75,8 +82,19 @@ class NodeRead(NodeBase):
 
 
 class NodeFullRead(NodeRead):
-    children: Optional['NodeFullRead']
+    children: Optional[List['NodeFullRead']]
+
+    class Config:
+        orm_mode = False
 
 
 class NodeList(BaseModel):
     items: List[NodeRead]
+
+    class Config:
+        orm_mode = False
+        json_encoders = {
+            datetime: lambda v: v.replace(tzinfo=None).isoformat(
+                timespec='milliseconds'
+            ) + 'Z',
+        }
