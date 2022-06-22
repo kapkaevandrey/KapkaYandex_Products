@@ -72,7 +72,6 @@ async def get_info_about_node(
 @router.delete(
     '/delete/{id}',
     status_code=HTTPStatus.OK,
-    response_model=NodeFullRead
 )
 async def delete_product_or_categorie(
     node_id: UUID4 = Path(alias='id'),
@@ -99,7 +98,7 @@ async def delete_product_or_categorie(
     response_model=NodeList
 )
 async def get_product_price_update_last_date(
-    date: datetime = Query(),
+    date: datetime,
     session: AsyncSession = Depends(get_async_session),
 ):
     """
