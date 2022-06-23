@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "id": "73b4c825-f35e-4144-bbea-2503b315f29d",
+      "name": "Telephon",
+      "parent_id": null,
+      "price": 150,
+      "type": "OFFER"
+    },
+    {
+      "id": "73b4c825-f35e-4144-bbea-2503b315f28d",
+      "name": "Photo",
+      "parent_id": null,
+      "price": 150,
+      "type": "OFFER"
+    }
+  ],
+  "updateDate": "2022-06-11T15:13:37.665Z"
+}

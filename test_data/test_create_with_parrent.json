@@ -1,0 +1,61 @@
+{
+  "items": [
+    {
+      "id": "73b4c825-f35e-4145-bbea-2503b315f29d",
+      "name": "Technics",
+      "parent_id": null,
+      "price": null,
+      "type": "CATEGORY"
+    },
+    {
+      "id": "73b4c825-f35e-4144-bbea-2503b315f29d",
+      "name": "Telephon",
+      "parent_id": "73b4c825-f35e-4145-bbea-2503b315f29d",
+      "price": 250,
+      "type": "OFFER"
+    },
+    {
+      "id": "73b4c825-f35e-4144-bbea-2503b315f28d",
+      "name": "Photo",
+      "parent_id": "73b4c825-f35e-4145-bbea-2503b315f29d",
+      "price": 50,
+      "type": "OFFER"
+    },
+    {
+      "id": "83b4c825-f35e-4144-bbea-2503b315f28d",
+      "name": "COMPUTER",
+      "parent_id": "73b4c825-f35e-4145-bbea-2503b315f29d",
+      "price": null,
+      "type": "CATEGORY"
+    },
+    {
+      "id": "83b4c826-f35e-4144-bbea-2503b315f28d",
+      "name": "MacBook",
+      "parent_id": "83b4c825-f35e-4144-bbea-2503b315f28d",
+      "price": 2000,
+      "type": "OFFER"
+    },
+    {
+      "id": "83b4c926-f35e-4144-bbea-2503b315f28d",
+      "name": "MacBookM1",
+      "parent_id": "83b4c825-f35e-4144-bbea-2503b315f28d",
+      "price": 2500,
+      "type": "OFFER"
+    },
+    {
+      "id": "83b4c125-f35e-4144-bbea-2503b315f28d",
+      "name": "SMALL COMPUTER",
+      "parent_id": "73b4c825-f35e-4145-bbea-2503b315f29d",
+      "price": null,
+      "type": "CATEGORY"
+    },
+    {
+      "id": "83b4c926-f35e-4144-bbea-2503b314f28d",
+      "name": "MacBookM32",
+      "parent_id": "83b4c125-f35e-4144-bbea-2503b315f28d",
+      "price": 24500,
+      "type": "OFFER"
+    }
+  ],
+  "updateDate": "2022-06-11T15:13:37.665Z"
+}
