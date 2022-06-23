@@ -41,7 +41,6 @@ async def update_or_create_items_package(
         if (node_obj.type == ProductType.offer.value and
                 node_obj.parent_id is not None):
             need_update_category_id.add(node_obj.parent_id)
-    print(need_update_category_id) ##########################################################
     session.add_all(tuple(nodes_objects) + tuple(history_objects))
     await session.commit()
     [await session.refresh(single_obj) for single_obj in nodes_objects]
