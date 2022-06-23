@@ -113,7 +113,7 @@ async def get_product_price_update_last_date(
 @router.get(
     '/node/{id}/statistic',
 )
-async def get_product_price_update_last_date(
+async def get_product_change_statistic(
         node_id: UUID4 = Path(alias='id'),
         date_start: Optional[datetime] = Query(None, alias='dateStart'),
         date_end: Optional[datetime] = Query(None, alias='dateEnd'),

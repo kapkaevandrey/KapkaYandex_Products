@@ -17,7 +17,7 @@ async def update_or_create_items_package(
         items_data: NodeListCreate,
 ):
     date = items_data.date
-    category_objects, offer_objects = [], []
+    category_objects, nodes_objects = [], []
     history_objects = []
     need_update_category_id = set()
     for item in items_data.items:
@@ -33,13 +33,13 @@ async def update_or_create_items_package(
         history_objects += await create_history_object(
             session, node_obj, date,
         )
-        offer_objects.append(node_obj)
+        nodes_objects.append(node_obj)
         if (node_obj.type == ProductType.offer.value and
                 node_obj.parent_id is not None):
             need_update_category_id.add(node_obj.parent_id)
-    session.add_all(tuple(offer_objects) + tuple(history_objects))
+    session.add_all(tuple(nodes_objects) + tuple(history_objects))
     await session.commit()
-    [await session.refresh(single_obj) for single_obj in offer_objects]
+    [await session.refresh(single_obj) for single_obj in nodes_objects]
     for unique_id in need_update_category_id:
         category_objects += await category_price_update(
             session, unique_id, date,
