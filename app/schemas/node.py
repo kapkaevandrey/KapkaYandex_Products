@@ -34,7 +34,6 @@ class NodeCreate(NodeBase):
 
     @root_validator(skip_on_failure=True)
     def check_price_type_category(cls, values):
-        print(values)
         if values['type'] == ProductType.offer.value:
             if 'price' in values and values['price'] is None:
                 raise ValueError(
